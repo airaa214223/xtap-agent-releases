@@ -1,10 +1,16 @@
 # xtap-agent-releases
 
-Public, anonymous download site for **xtap** Linux binaries. Source lives in a private repository; this repo holds only release artifacts, checksums, and the install guide (ADR 0001).
+Public, anonymous download site for **xtap** Linux binaries. Source lives in a private repository; this repo holds only release artifacts, checksums, install guide, and per-platform setup one-pagers (ADR 0001).
 
-## Install (Muse VM)
+## Setup pages
 
-Replace `<tag>` with a release tag such as `v0.1.0-rc.1` or `v0.1.0`.
+Give the agent the page for its platform (attached to every release and kept on `main`):
+
+- **Muse**: [`muse-setup.md`](./muse-setup.md)
+
+## Install (Linux VM)
+
+Replace `<tag>` with a release tag such as `v0.1.0-rc.3` or `v0.1.0`. Prefer the platform setup page above when an agent is driving install.
 
 ### 1. Pick the binary for this VM
 
@@ -15,7 +21,7 @@ case "$ARCH" in
   aarch64|arm64) ARTIFACT=xtap-linux-arm64 ;;
   *) echo "unsupported arch: $ARCH" >&2; exit 1 ;;
 esac
-TAG=v0.1.0-rc.1   # or latest release tag
+TAG=v0.1.0-rc.3   # or latest release tag
 BASE="https://github.com/airaa214223/xtap-agent-releases/releases/download/${TAG}"
 ```
 
@@ -37,23 +43,8 @@ sha256sum -c SHA256SUMS --ignore-missing
 ```bash
 mkdir -p ~/.local/bin
 install -m 0755 "$ARTIFACT" ~/.local/bin/xtap
-export PATH="$HOME/.local/bin:$PATH"
-xtap version
+~/.local/bin/xtap version
 ```
-
-### 5. Muse setup + skill
-
-```bash
-xtap setup --platform muse \
-  --act-origin "<ACT_ORIGIN>" \
-  --mcp-gateway "<MCP_GATEWAY_URL>" \
-  --software-id "<CONNECT_SOFTWARE_ID>" \
-  --credential-name custom.xtap
-
-xtap skill show
-```
-
-Do not paste Connect tokens on the command line. Follow `xtap skill show` for the safe task/tool sequence.
 
 ## Release assets
 
@@ -63,4 +54,5 @@ Each tag publishes:
 - `xtap-linux-arm64`
 - `SHA256SUMS`
 - `install.md`
+- `<platform>-setup.md` for each enabled platform in `RELEASE_ENV`
 - this `README.md`
