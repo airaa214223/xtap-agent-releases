@@ -47,7 +47,7 @@ If checksum verification is anything other than OK, **stop**. Do not install a b
 ```bash
 ~/.local/bin/xtap setup --platform muse \
   --act-origin https://localneat.loca.lt \
-  --mcp-gateway https://mcp.xtap.dev/mcp \
+  --mcp-gateway https://mcpgwneat.loca.lt/mcp \
   --software-id client_01M5X33QZNTYBED5N6P6JASHA4 \
   --credential-name custom.xtap
 ```
