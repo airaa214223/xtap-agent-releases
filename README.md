@@ -10,7 +10,7 @@ Give the agent the page for its platform (attached to every release and kept on 
 
 ## Install (Linux VM)
 
-Replace `<tag>` with a release tag such as `v0.1.0-rc.3` or `v0.1.0`. Prefer the platform setup page above when an agent is driving install.
+Replace `<tag>` with a release tag such as `v0.1.0-rc.4` or `v0.1.0`. Prefer the platform setup page above when an agent is driving install.
 
 ### 1. Pick the binary for this VM
 
@@ -21,7 +21,7 @@ case "$ARCH" in
   aarch64|arm64) ARTIFACT=xtap-linux-arm64 ;;
   *) echo "unsupported arch: $ARCH" >&2; exit 1 ;;
 esac
-TAG=v0.1.0-rc.3   # or latest release tag
+TAG=v0.1.0-rc.4   # or latest release tag
 BASE="https://github.com/airaa214223/xtap-agent-releases/releases/download/${TAG}"
 ```
 
