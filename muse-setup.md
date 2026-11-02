@@ -1,4 +1,4 @@
-# XTAP setup for Muse (v0.1.0-rc.4)
+# XTAP setup for Muse (v0.1.0-rc.5)
 
 Give Muse this page. Follow the steps in order. Do not skip verification.
 
@@ -30,7 +30,7 @@ case "$ARCH" in
   aarch64|arm64) ARTIFACT=xtap-linux-arm64 ;;
   *) echo "unsupported arch: $ARCH" >&2; exit 1 ;;
 esac
-TAG=v0.1.0-rc.4
+TAG=v0.1.0-rc.5
 BASE="https://github.com/airaa214223/xtap-agent-releases/releases/download/${TAG}"
 curl -fsSL -o "$ARTIFACT" "${BASE}/${ARTIFACT}"
 curl -fsSL -o SHA256SUMS "${BASE}/SHA256SUMS"
@@ -69,7 +69,7 @@ Then sync and list tools; show the person the tool list:
 
 ## Connect your apps
 
-Enterprise apps (Jira, Salesforce, Notion, Slack, ...) are connected by the person, not by this setup. Tell them to connect each app they want to use under **XTAP Connected apps**, the page in the ACT personal portal at https://abhiact.devtunnel.fyi.
+Enterprise apps (Jira, Salesforce, Notion, Slack, ...) are connected by the person, not by this setup. Tell them to connect each app they want to use under **XTAP Connected apps** (the page in the ACT personal portal at https://abhiact.devtunnel.fyi).
 
 Until an app is connected, tool calls for it fail with `next_action: connect_app`. That is expected: tell the person to connect the app, then stop. It is not a setup failure.
 
