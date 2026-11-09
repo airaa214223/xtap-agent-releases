@@ -2,15 +2,21 @@
 
 Public, anonymous download site for **xtap** Linux binaries. Source lives in a private repository; this repo holds only release artifacts, checksums, install guide, and per-platform setup one-pagers (ADR 0001).
 
-## Setup pages
+## Setup
 
-Give the agent the page for its platform (attached to every release and kept on `main`):
+Each enabled platform has three files, attached to every release and kept on `main`:
+
+- `<platform>-setup.md`: the setup guide for the person (connector values, what the installer does, how to add the skill)
+- `<platform>-install.sh`: the installer. It downloads and verifies the binary, then runs `xtap setup` and `xtap doctor`. The person runs it, or asks the agent to run it.
+- `<platform>-skill.md`: the agent skill (same text as `xtap skill show`), added through the platform's own skills or instructions setting
 
 - **Muse**: [`muse-setup.md`](./muse-setup.md)
 
+The setup pages are reference docs for people. Don't paste them into an agent as instructions to follow.
+
 ## Install (Linux VM)
 
-Replace `<tag>` with a release tag such as `v0.1.0-rc.5` or `v0.1.0`. Prefer the platform setup page above when an agent is driving install.
+Replace `<tag>` with a release tag such as `v0.1.0-rc.5` or `v0.1.0`. The platform installer above does all of this plus `xtap setup`.
 
 ### 1. Pick the binary for this VM
 
@@ -54,5 +60,5 @@ Each tag publishes:
 - `xtap-linux-arm64`
 - `SHA256SUMS`
 - `install.md`
-- `<platform>-setup.md` for each enabled platform in `RELEASE_ENV`
+- `<platform>-setup.md`, `<platform>-install.sh`, `<platform>-skill.md` for each enabled platform in `RELEASE_ENV`
 - this `README.md`
