@@ -1,16 +1,16 @@
 #!/usr/bin/env bash
-# xtap installer for Muse (v0.1.0-rc.7).
+# xtap installer for Muse (v0.1.0-rc.8).
 #
 # Run by the person setting up XTAP, on the Muse VM:
 #   bash muse-install.sh                 # install + setup + check
-#   bash muse-install.sh --install-only  # update the binary only
+#   bash muse-install.sh --install-only  # update binary + skill, skip setup
 #
 # Every value below is public (it ships in the release). No tokens are read,
 # printed, or stored by this script; `xtap setup` gets the Connect credential
 # from the platform itself.
 set -euo pipefail
 
-TAG=v0.1.0-rc.7
+TAG=v0.1.0-rc.8
 BASE="https://github.com/airaa214223/xtap-agent-releases/releases/download/${TAG}"
 XTAP="$HOME/.local/bin/xtap"
 
@@ -45,17 +45,20 @@ mkdir -p "$HOME/.local/bin"
 install -m 0755 "$WORK/$ARTIFACT" "$XTAP"
 "$XTAP" version
 
+register_skill() {
+  step "Register the skill (xtap skill install)"
+  "$XTAP" skill install \
+    || fail 5 "skill install failed (see the JSON above). xtap itself is installed."
+}
+
 if [[ "$INSTALL_ONLY" == 1 ]]; then
-  step "Installed. Skipped setup (--install-only)."
+  register_skill
+  step "Updated. Skipped setup (--install-only)."
   exit 0
 fi
 
 step "Connect (xtap setup)"
-"$XTAP" setup --platform muse \
-  --act-origin https://stage-api.devtunnel.fyi \
-  --mcp-gateway https://stage-mcp.devtunnel.fyi/mcp \
-  --software-id client_01M6N2XZ9DVQG3KMB484ZF491H \
-  --credential-name custom.xtap \
+"$XTAP" setup --platform muse --act-origin https://stage-api.devtunnel.fyi --mcp-gateway https://stage-mcp.devtunnel.fyi/mcp --software-id client_01M6N2XZ9DVQG3KMB484ZF491H --credential-name custom.xtap \
   || fail 2 "setup failed. The JSON above has next_action and error.hint. Fix that, then run this script again."
 
 step "Check (xtap doctor)"
@@ -67,9 +70,10 @@ step "Tools (xtap tool sync, xtap tool list)"
   || fail 4 "tool sync failed (see the JSON above). Setup itself succeeded."
 "$XTAP" tool list
 
+register_skill
+
 step "Done"
 cat <<'EOF'
-Next:
-  1. Add the XTAP skill to Muse (muse-skill.md, or the output of `xtap skill show`).
-  2. Connect the enterprise apps you want under XTAP Connected apps (the page in the ACT personal portal at https://stage-api.devtunnel.fyi).
+Next: connect the enterprise apps you want under XTAP Connected apps
+(the page in the ACT personal portal at https://stage-api.devtunnel.fyi).
 EOF

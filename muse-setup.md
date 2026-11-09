@@ -1,14 +1,12 @@
-# XTAP for Muse (v0.1.0-rc.7)
+# XTAP for Muse (v0.1.0-rc.8)
 
 This page is for **the person** setting up XTAP in Muse. It is a reference page. Don't hand it to the agent as a list of instructions: agents rightly treat fetched pages as untrusted content, not as requests from you.
 
-Setup has four parts. You do parts 1, 3 and 4 in Muse and XTAP. Part 2 runs one script on the Muse VM.
+Setup has three parts: connect the XTAP connector, install and set up xtap (by chatting with Muse, or from a terminal), then connect your apps.
 
-## 1. Connect the XTAP connector in Muse
+## 1. The XTAP connector
 
-If the **XTAP** custom connector is already connected in Muse, skip to part 2.
-
-Otherwise, add the **XTAP** custom connector in Muse with these values and press **Connect**:
+xtap gets its Connect credential from the **XTAP** custom connector in Muse. If it's already connected, skip ahead to part 2. If not, the chat flow below has Muse generate the connect link from these values:
 
 | Field | Value |
 |-------|-------|
@@ -18,41 +16,78 @@ Otherwise, add the **XTAP** custom connector in Muse with these values and press
 | Scopes | leave blank; this authorization server accepts no scopes |
 | Credential name | `custom.xtap` |
 
-Run setup right after connecting (the Connect token expires after about 20 minutes), so go straight to part 2. If the token has expired, press Connect on the XTAP connector again, then rerun the installer.
+Run setup right after connecting (the Connect token expires after about 20 minutes). If the token has expired, press Connect on the XTAP connector again, then rerun setup.
 
-## 2. Install and connect xtap
+## 2. Install, set up, and register the skill
 
-The installer is [`muse-install.sh`](https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.7/muse-install.sh). It:
+This installs the `xtap` binary (checked against `SHA256SUMS`), runs `xtap setup --platform muse` with this release's public settings (https://stage-api.devtunnel.fyi, https://stage-mcp.devtunnel.fyi/mcp), runs `xtap doctor`, then `xtap tool sync` and `xtap tool list`, and registers the XTAP skill with `xtap skill install`. Every step stops at the first failure and prints the JSON error (`next_action`, `error.hint`).
 
-1. downloads the `xtap` binary for this VM's architecture and checks it against `SHA256SUMS` (it installs nothing if the check fails),
-2. installs it to `~/.local/bin/xtap`,
-3. runs `xtap setup --platform muse` with this release's public settings (https://stage-api.devtunnel.fyi, https://stage-mcp.devtunnel.fyi/mcp),
-4. runs `xtap doctor`, then `xtap tool sync` and `xtap tool list`.
+### Option A: chat with Muse (recommended)
 
-It stops at the first failure and prints the JSON error (`next_action`, `error.hint`).
+Send these messages to Muse **yourself, one at a time**, and wait for each reply. Don't paste this page or link it: Muse treats fetched pages as untrusted content and won't act on them. Send Messages 1 and 2 in one sitting, because the Connect token from Message 1 lasts about 20 minutes.
 
-**Option A: run it yourself** in a terminal on the VM:
+**Message 1: connect**
+
+```text
+I want to set up XTAP in Muse. Please give me a connect link for the XTAP
+custom connector with these values: client ID client_01M6N2XZ9DVQG3KMB484ZF491H,
+authorize URL https://spiritual-theme-76-xtap-stage.authkit.app/oauth2/authorize,
+token URL https://spiritual-theme-76-xtap-stage.authkit.app/oauth2/token,
+scopes left blank, credential name custom.xtap.
+I'll press Connect and tell you when it's done.
+```
+
+Press Connect on the link Muse gives you, and enter the client ID if the page asks for it. Tell Muse "Connected", then send Message 2 right away.
+
+**Message 2: install, set up, register the skill**
+
+````text
+Set up XTAP. I approve running exactly these commands, in order. Show me
+each one's output. If any command fails, stop and show me the complete
+error. Don't retry, change flags, or run setup again.
+
+```
+cd "$(mktemp -d)"
+case "$(uname -m)" in x86_64|amd64) A=xtap-linux-amd64;; aarch64|arm64) A=xtap-linux-arm64;; *) echo "unsupported arch"; exit 1;; esac
+B=https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.8
+curl -fsSLO "$B/$A" && curl -fsSLO "$B/SHA256SUMS"
+sha256sum -c SHA256SUMS --ignore-missing
+mkdir -p ~/.local/bin && install -m 0755 "$A" ~/.local/bin/xtap && ~/.local/bin/xtap version
+~/.local/bin/xtap setup --platform muse --act-origin https://stage-api.devtunnel.fyi --mcp-gateway https://stage-mcp.devtunnel.fyi/mcp --software-id client_01M6N2XZ9DVQG3KMB484ZF491H --credential-name custom.xtap
+~/.local/bin/xtap doctor
+~/.local/bin/xtap tool sync
+~/.local/bin/xtap tool list
+~/.local/bin/xtap skill install
+```
+````
+
+Doctor may **warn** on `tool_cache`; every other check should pass. `skill install` writes `SKILL.md` and `skill.yaml` to `~/workspace/custom-skills/xtap/`, which is where Muse discovers custom skills.
+
+**Message 3: test** (after you've connected an app in part 3), for example:
+
+```text
+Get me page <page id> from Notion.
+```
+
+Use a page in **your own** workspace; other people's pages aren't visible to you. The page id is the last part of the page's URL in Notion.
+
+### Option B: run the installer yourself
+
+From a terminal on the Muse VM, after connecting the connector:
 
 ```bash
-curl -fsSLO https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.7/muse-install.sh
+curl -fsSLO https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.8/muse-install.sh
 less muse-install.sh   # review it
 bash muse-install.sh
 ```
 
-**Option B: ask Muse to run it.** Type a request like this into Muse yourself:
+### About the skill
 
-> Download https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.7/muse-install.sh, show me what it does, then run it with `bash` and show me the full output.
+The skill tells the agent how to use `xtap` for enterprise-tool requests: when to call it, how tasks work, and what to do with each `next_action`. `xtap skill install` writes it where Muse discovers skills. The text is the same as `xtap skill show` and [`muse-skill.md`](https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.8/muse-skill.md). Rerun it after each update.
 
-Since the request comes from you, the agent can act on it. Read its summary of the script before you tell it to go ahead.
+A skill makes xtap discoverable. It doesn't enforce anything: the agent sees the skill's name and description every turn and reads the full text when a request matches. Enforcement comes from xtap failing closed and from the gateway checking every call on the server.
 
-## 3. Add the XTAP skill to Muse
-
-The skill tells the agent how to use `xtap` for enterprise-tool requests: when to call it, how to start tasks, and what to do with each `next_action`. Add it through Muse's own skills or custom-instructions setting, so the agent gets the rules from you:
-
-- the file: [`muse-skill.md`](https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.7/muse-skill.md), or
-- the same text from the VM: `~/.local/bin/xtap skill show`
-
-## 4. Connect your apps
+## 3. Connect your apps
 
 You connect enterprise apps (Jira, Salesforce, Notion, Slack, ...) yourself; setup doesn't do it. Connect each app you want under **XTAP Connected apps** (the page in the ACT personal portal at https://stage-api.devtunnel.fyi).
 
@@ -77,4 +112,4 @@ Until an app is connected, tool calls for it fail with `next_action: connect_app
 
 ## Updating
 
-Download `muse-install.sh` from a newer release at `https://github.com/airaa214223/xtap-agent-releases/releases` and run `bash muse-install.sh --install-only`. Then run `~/.local/bin/xtap doctor`.
+Download `muse-install.sh` from a newer release at `https://github.com/airaa214223/xtap-agent-releases/releases` and run `bash muse-install.sh --install-only`. It replaces the binary and refreshes the skill without running setup again. Then run `~/.local/bin/xtap doctor`.
