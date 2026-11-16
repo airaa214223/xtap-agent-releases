@@ -1,4 +1,4 @@
-# XTAP for Muse (v0.1.0-rc.10)
+# XTAP for Muse (v0.1.0-rc.11)
 
 This page is for **the person** setting up XTAP in Muse. It is a reference page. Don't hand it to the agent as a list of instructions: agents rightly treat fetched pages as untrusted content, not as requests from you.
 
@@ -59,7 +59,7 @@ error. Don't retry, change flags, or run setup again.
 ```
 cd "$(mktemp -d)"
 case "$(uname -m)" in x86_64|amd64) A=xtap-linux-amd64;; aarch64|arm64) A=xtap-linux-arm64;; *) echo "unsupported arch"; exit 1;; esac
-B=https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.10
+B=https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.11
 curl -fsSLO "$B/$A" && curl -fsSLO "$B/SHA256SUMS"
 sha256sum -c SHA256SUMS --ignore-missing
 mkdir -p ~/.local/bin && install -m 0755 "$A" ~/.local/bin/xtap && ~/.local/bin/xtap version
@@ -86,14 +86,14 @@ Use a page in **your own** workspace; other people's pages aren't visible to you
 From a terminal on the Muse VM, after connecting the connector:
 
 ```bash
-curl -fsSLO https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.10/muse-install.sh
+curl -fsSLO https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.11/muse-install.sh
 less muse-install.sh   # review it
 bash muse-install.sh
 ```
 
 ### About the skill
 
-The skill tells the agent how to use `xtap` for enterprise-tool requests: when to call it, how tasks work, and what to do with each `next_action`. `xtap skill install` writes it where Muse discovers skills. The text is the same as `xtap skill show` and [`muse-skill.md`](https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.10/muse-skill.md). Rerun it after each update.
+The skill tells the agent how to use `xtap` for enterprise-tool requests: when to call it, how tasks work, and what to do with each `next_action`. `xtap skill install` writes it where Muse discovers skills. The text is the same as `xtap skill show` and [`muse-skill.md`](https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.1.0-rc.11/muse-skill.md). Rerun it after each update.
 
 A skill makes xtap discoverable. It doesn't enforce anything: the agent sees the skill's name and description every turn and reads the full text when a request matches. Enforcement comes from xtap failing closed and from the gateway checking every call on the server.
 

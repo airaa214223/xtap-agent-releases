@@ -24,14 +24,16 @@ When the person asks to refresh XTAP tools, says they connected or disconnected 
 2. `xtap tool list`
 3. Report the available tools and schemas.
 
+After the person connects an app (or approves a LunarFence request to connect one or grant access), run `xtap tool sync` then `xtap tool list` before calling that app's tools.
+
 ## When a command fails: act on `next_action`
 
 Every failed command prints one JSON object on stdout with `ok: false`. Read `error.next_action` and do exactly what it says. Do not branch on the wording of `error.message` or `error.hint`; they are for the person.
 
-- `retry` — run the same command once more (wait `error.retry_after_seconds` first when it is present). If it fails again, tell the person and stop.
+- `retry` — run the same command once more (wait `error.retry_after_seconds` first when it is present). Each retry of `xtap tool call` gets a new call token. If the same call fails again, treat it as `report`.
 - `fix_input` — correct the flag, file, or tool name the hint points at, then run the command again once. Use an exact name from `xtap tool list`; never guess.
 - `sync_tools` — run `xtap tool sync`, then `xtap tool list`, then retry the call once with an exact listed tool name.
-- `new_task` — the task ended or does not belong to this caller: start a new task with the current prompt (`xtap task start`). Never reuse a task id across different person requests.
+- `new_task` — the task ended or does not belong to this caller: start a new task with the current prompt (`xtap task start`). Never reuse a task id across different person requests. `request_not_in_task` means the task was started before LunarFence request tools were supported; the new task supports them.
 - `tell_person` — tell the person what happened (use `error.message`) and stop. Do not retry and do not reword the prompt or arguments to get around a policy denial.
 - `connect_app` — tell the person to connect that app in XTAP Connected apps (the hint names the app), then stop. Do not retry until they say it is connected.
 - `reconnect_xtap` — tell the person to press Connect on the XTAP connector in Muse again, then stop. Run `xtap setup` again only after they confirm.
@@ -43,6 +45,8 @@ Every failed command prints one JSON object on stdout with `ok: false`. Read `er
 
 - **`consent_required`** (from task start): tell the person to approve the request in ACT (it shows `XTAP task` plus the first 8 chars of the task id), then **stop**. Do not retry or poll. Its `next_action` is `tell_person`.
 - **Policy denial** (`tell_person`, `reason` set): tell the person what was denied; do not retry with reworded prompts or arguments.
+- **LunarFence requests**: a request tool (`lunarfence_request_app_connection`, `lunarfence_request_app_access`) refused with `requests_not_allowed`: tell the person to open this agent in the LunarFence console and turn on 'Allow this agent to ask you to connect apps or give it access', then stop.
+- **After an xtap upgrade**, each live prompt gets one new task, so the person approves it once more.
 
 ## Setup, recover, and state
 
