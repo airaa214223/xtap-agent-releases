@@ -45,6 +45,7 @@ Every failed command prints one JSON object on stdout with `ok: false`. Read `er
 
 - **`consent_required`** (from task start): tell the person to approve the request in ACT (it shows `XTAP task` plus the first 8 chars of the task id), then **stop**. Do not retry or poll. Its `next_action` is `tell_person`.
 - **Policy denial** (`tell_person`, `reason` set): tell the person what was denied; do not retry with reworded prompts or arguments.
+- **Monthly tool-call limit** (`plan_limit_reached`, `tell_person`): the person's LunarFence account used this month's tool-call limit. Tell the person when calls work again: `error.limit_resets_at` (and the hint) give it in UTC, so convert it to the person's own time zone before telling them, then stop. Never retry. LunarFence's own tools (`explain_refusal`, `get_my_access`) still work.
 - **LunarFence requests**: a request tool (`lunarfence_request_app_connection`, `lunarfence_request_app_access`) refused with `requests_not_allowed`: tell the person to open this agent in the LunarFence console and turn on 'Allow this agent to ask you to connect apps or give it access', then stop.
 - **After an xtap upgrade**, each live prompt gets one new task, so the person approves it once more.
 
