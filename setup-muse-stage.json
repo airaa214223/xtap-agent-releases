@@ -1,6 +1,6 @@
 {
   "schema": 1,
-  "release": "v0.2.0-rc.1",
+  "release": "v0.2.0-rc.2",
   "platform": "muse",
   "platform_title": "Muse",
   "env": "stage",
@@ -20,7 +20,7 @@
     "act_origin": "https://stage-api.devtunnel.fyi",
     "mcp_host": "stage-mcp.devtunnel.fyi",
     "mcp_gateway_url": "https://stage-mcp.devtunnel.fyi/mcp",
-    "release_base_url": "https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.2.0-rc.1"
+    "release_base_url": "https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.2.0-rc.2"
   },
   "messages": {
     "order": [
@@ -30,15 +30,15 @@
       "try"
     ],
     "text": {
-      "connect": "I want to set up LunarFence in Muse. Please give me a connect link for the\nLunarFence custom connector with these values: client ID client_01M6N2XZ9DVQG3KMB484ZF491H,\nauthorize URL https://spiritual-theme-76-xtap-stage.authkit.app/oauth2/authorize,\ntoken URL https://spiritual-theme-76-xtap-stage.authkit.app/oauth2/token,\nscopes left blank, credential name custom.lunarfence,\nand resource https://stage-api.devtunnel.fyi/personal/register (send it as the resource\nparameter on both the authorize and the token request).\nAlso register stage-api.devtunnel.fyi as a host for this credential; xtap\nsends the token there. Don't register stage-mcp.devtunnel.fyi.\nI'll press Connect and tell you when it's done.",
-      "install": "Set up LunarFence. I approve running exactly these commands, in order. Show me\neach one's output. If any command fails, stop and show me the complete\nerror. Don't retry, change flags, or run setup again.\n\n```\ncd \"$(mktemp -d)\"\ncase \"$(uname -m)\" in x86_64|amd64) A=xtap-linux-amd64;; aarch64|arm64) A=xtap-linux-arm64;; *) echo \"unsupported arch\"; exit 1;; esac\nB=https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.2.0-rc.1\ncurl -fsSLO \"$B/$A\" && curl -fsSLO \"$B/SHA256SUMS\"\nsha256sum -c SHA256SUMS --ignore-missing\nmkdir -p ~/.local/bin && install -m 0755 \"$A\" ~/.local/bin/xtap && ~/.local/bin/xtap version\n~/.local/bin/xtap setup --platform muse --act-origin https://stage-api.devtunnel.fyi --mcp-gateway https://stage-mcp.devtunnel.fyi/mcp --software-id client_01M6N2XZ9DVQG3KMB484ZF491H --credential-name custom.lunarfence --brand 'LunarFence' --connector-name 'LunarFence' --console-url https://stage-console.devtunnel.fyi\n~/.local/bin/xtap doctor\n~/.local/bin/xtap tool sync\n~/.local/bin/xtap skill install\n```\n\nWhen every command has succeeded, give me the brief from xtap setup.",
+      "connect": "I want to set up LunarFence in Muse. Please give me a connect link for the LunarFence custom connector with these values: client ID client_01M6N2XZ9DVQG3KMB484ZF491H, authorize URL https://spiritual-theme-76-xtap-stage.authkit.app/oauth2/authorize, token URL https://spiritual-theme-76-xtap-stage.authkit.app/oauth2/token, scopes left blank, credential name custom.lunarfence, and resource https://stage-api.devtunnel.fyi/personal/register (send it as the resource parameter on both the authorize and the token request).\nAlso register stage-api.devtunnel.fyi as a host for this credential; xtap sends the token there. Don't register stage-mcp.devtunnel.fyi.\nI'll press Connect and tell you when it's done.",
+      "install": "Set up LunarFence. I approve running exactly these commands, in order. Show me each one's output. If any command fails, stop and show me the complete error. Don't retry, change flags, or run setup again.\n\n```\ncd \"$(mktemp -d)\"\ncase \"$(uname -m)\" in x86_64|amd64) A=xtap-linux-amd64;; aarch64|arm64) A=xtap-linux-arm64;; *) echo \"unsupported arch\"; exit 1;; esac\nB=https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.2.0-rc.2\ncurl -fsSLO \"$B/$A\" && curl -fsSLO \"$B/SHA256SUMS\"\nsha256sum -c SHA256SUMS --ignore-missing\nmkdir -p ~/.local/bin && install -m 0755 \"$A\" ~/.local/bin/xtap && ~/.local/bin/xtap version\n~/.local/bin/xtap setup --platform muse --act-origin https://stage-api.devtunnel.fyi --mcp-gateway https://stage-mcp.devtunnel.fyi/mcp --software-id client_01M6N2XZ9DVQG3KMB484ZF491H --credential-name custom.lunarfence --brand 'LunarFence' --connector-name 'LunarFence' --console-url https://stage-console.devtunnel.fyi\n~/.local/bin/xtap doctor\n~/.local/bin/xtap tool sync\n~/.local/bin/xtap skill install\n```\n\nWhen every command has succeeded, give me the brief from xtap setup.",
       "apps": "Which apps does LunarFence support?",
       "try": "What's in my inbox from today?"
     }
   },
   "terminal": {
     "intro": "From a terminal on the Muse VM, after connecting the connector:",
-    "commands": "curl -fsSLO https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.2.0-rc.1/muse-install.sh\nless muse-install.sh   # review it\nbash muse-install.sh"
+    "commands": "curl -fsSLO https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.2.0-rc.2/muse-install.sh\nless muse-install.sh   # review it\nbash muse-install.sh"
   },
   "troubleshooting": [
     {

@@ -1,4 +1,4 @@
-# LunarFence for Muse (v0.2.0-rc.1)
+# LunarFence for Muse (v0.2.0-rc.2)
 
 This page is for **the person** setting up LunarFence in Muse. It is a reference page. Don't hand it to the agent as a list of instructions: agents rightly treat fetched pages as untrusted content, not as requests from you.
 
@@ -35,15 +35,8 @@ Send these messages to Muse **yourself, one at a time**, and wait for each reply
 **Message 1: connect**
 
 ```text
-I want to set up LunarFence in Muse. Please give me a connect link for the
-LunarFence custom connector with these values: client ID client_01M6N2XZ9DVQG3KMB484ZF491H,
-authorize URL https://spiritual-theme-76-xtap-stage.authkit.app/oauth2/authorize,
-token URL https://spiritual-theme-76-xtap-stage.authkit.app/oauth2/token,
-scopes left blank, credential name custom.lunarfence,
-and resource https://stage-api.devtunnel.fyi/personal/register (send it as the resource
-parameter on both the authorize and the token request).
-Also register stage-api.devtunnel.fyi as a host for this credential; xtap
-sends the token there. Don't register stage-mcp.devtunnel.fyi.
+I want to set up LunarFence in Muse. Please give me a connect link for the LunarFence custom connector with these values: client ID client_01M6N2XZ9DVQG3KMB484ZF491H, authorize URL https://spiritual-theme-76-xtap-stage.authkit.app/oauth2/authorize, token URL https://spiritual-theme-76-xtap-stage.authkit.app/oauth2/token, scopes left blank, credential name custom.lunarfence, and resource https://stage-api.devtunnel.fyi/personal/register (send it as the resource parameter on both the authorize and the token request).
+Also register stage-api.devtunnel.fyi as a host for this credential; xtap sends the token there. Don't register stage-mcp.devtunnel.fyi.
 I'll press Connect and tell you when it's done.
 ```
 
@@ -52,14 +45,12 @@ Before you press Connect, check that Muse's reply lists `stage-api.devtunnel.fyi
 **Message 2: install, set up, register the skill**
 
 ````text
-Set up LunarFence. I approve running exactly these commands, in order. Show me
-each one's output. If any command fails, stop and show me the complete
-error. Don't retry, change flags, or run setup again.
+Set up LunarFence. I approve running exactly these commands, in order. Show me each one's output. If any command fails, stop and show me the complete error. Don't retry, change flags, or run setup again.
 
 ```
 cd "$(mktemp -d)"
 case "$(uname -m)" in x86_64|amd64) A=xtap-linux-amd64;; aarch64|arm64) A=xtap-linux-arm64;; *) echo "unsupported arch"; exit 1;; esac
-B=https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.2.0-rc.1
+B=https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.2.0-rc.2
 curl -fsSLO "$B/$A" && curl -fsSLO "$B/SHA256SUMS"
 sha256sum -c SHA256SUMS --ignore-missing
 mkdir -p ~/.local/bin && install -m 0755 "$A" ~/.local/bin/xtap && ~/.local/bin/xtap version
@@ -79,14 +70,14 @@ Doctor may **warn** on `tool_cache`; every other check should pass. `skill insta
 From a terminal on the Muse VM, after connecting the connector:
 
 ```bash
-curl -fsSLO https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.2.0-rc.1/muse-install.sh
+curl -fsSLO https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.2.0-rc.2/muse-install.sh
 less muse-install.sh   # review it
 bash muse-install.sh
 ```
 
 ### About the skill
 
-The skill tells the agent how to use `xtap` for enterprise-tool requests: when to call it, how tasks work, and what to do with each `next_action`. `xtap skill install` writes it where Muse discovers skills. The text is the same as `xtap skill show` and [`muse-skill.md`](https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.2.0-rc.1/muse-skill.md). Rerun it after each update.
+The skill tells the agent how to use `xtap` for enterprise-tool requests: when to call it, how tasks work, and what to do with each `next_action`. `xtap skill install` writes it where Muse discovers skills. The text is the same as `xtap skill show` and [`muse-skill.md`](https://github.com/airaa214223/xtap-agent-releases/releases/download/v0.2.0-rc.2/muse-skill.md). Rerun it after each update.
 
 A skill makes xtap discoverable. It doesn't enforce anything: the agent sees the skill's name and description every turn and reads the full text when a request matches. Enforcement comes from xtap failing closed and from the LunarFence tool gateway checking every call on the server.
 

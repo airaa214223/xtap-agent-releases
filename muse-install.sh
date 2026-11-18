@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# xtap installer for Muse (v0.2.0-rc.1).
+# xtap installer for Muse (v0.2.0-rc.2).
 #
 # Run by the person setting up LunarFence, on the Muse VM:
 #   bash muse-install.sh                 # install + setup + check
@@ -10,7 +10,7 @@
 # from the platform itself.
 set -euo pipefail
 
-TAG=v0.2.0-rc.1
+TAG=v0.2.0-rc.2
 BASE="https://github.com/airaa214223/xtap-agent-releases/releases/download/${TAG}"
 XTAP="$HOME/.local/bin/xtap"
 
