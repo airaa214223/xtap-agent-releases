@@ -58,7 +58,8 @@ Each tag publishes:
 
 - `xtap-linux-amd64`
 - `xtap-linux-arm64`
-- `SHA256SUMS`
+- `SHA256SUMS` (covers every asset below, not only the binaries)
 - `install.md`
 - `<platform>-setup.md`, `<platform>-install.sh`, `<platform>-skill.md` for each enabled platform in `RELEASE_ENV`
+- `setup-<platform>-<env>.json` for each of those platforms: the page's setup messages, terminal commands and troubleshooting items as JSON (schema v1)
 - this `README.md`

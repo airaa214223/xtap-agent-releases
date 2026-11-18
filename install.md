@@ -44,13 +44,17 @@ xtap version
 
 ```bash
 xtap setup --platform muse \
-  --act-origin "<ACT_ORIGIN>" \
-  --mcp-gateway "<MCP_GATEWAY_URL>" \
+  --act-origin "<LUNARFENCE_SERVER_ORIGIN>" \
+  --mcp-gateway "<LUNARFENCE_TOOL_GATEWAY_URL>" \
   --software-id "<CONNECT_SOFTWARE_ID>" \
-  --credential-name custom.xtap
+  --credential-name custom.lunarfence \
+  --brand 'LunarFence' --connector-name 'LunarFence' \
+  --console-url "<LUNARFENCE_CONSOLE_URL>"
 
 xtap skill show
 ```
+
+Every value comes from the release's setup page (`muse-setup.md`), whose Message 2 has the exact command. `--credential-name`, `--brand`, `--connector-name` and `--console-url` are required on the first setup; later runs reuse the stored values, and setup fails with one usage error naming every missing flag. After setup, the page's Message 3 ("Which apps does LunarFence support?") and Message 4 ("What's in my inbox from today?") get you started.
 
 On Muse, Connect credentials come from the platform helper; do not paste tokens on the command line. Prefer the skill text from `xtap skill show` for the safe task/tool sequence.
 

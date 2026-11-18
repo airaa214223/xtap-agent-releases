@@ -1,10 +1,16 @@
-# XTAP for Muse
+# LunarFence for Muse
 
-Use this skill when the person needs an **enterprise tool** through XTAP (Jira, Salesforce, Notion, etc.).
+Use this skill when the person needs an **enterprise tool** through LunarFence (Notion, Gmail, Slack, etc.), or asks which apps LunarFence supports or to connect one.
 
 ## When not to call xtap (SC-005)
 
-**Never call `xtap` when no enterprise tool is needed.** If the request can be answered without an enterprise system, do not run any `xtap` command. That keeps ACT and MCP gateway traffic at zero.
+**Never call `xtap` when no enterprise tool is needed.** If the request can be answered without an enterprise system, do not run any `xtap` command. That keeps LunarFence traffic at zero. Questions about LunarFence apps (which are supported, which are connected, connecting one) do need it.
+
+## After setup, and LunarFence apps
+
+- **After `xtap setup` succeeds**: give the person the `data.brief` from its output in your own words, in a few lines, then stop. Don't list tools.
+- **"Which apps does LunarFence support?"** (or similar): call `lunarfence_list_available_apps` through `xtap tool call`, following the safe sequence below (start a task with the person's prompt first). If they ask what is already connected, call `lunarfence_list_connected_apps` the same way.
+- **"Connect <app>"**: call `lunarfence_request_app_connection` the same way and give the person the link it returns. If it is refused with `requests_not_allowed`, follow the LunarFence requests rule under Consent and policy. After they say the app is connected, run `xtap tool sync` then `xtap tool list`.
 
 ## Safe sequence
 
@@ -18,7 +24,7 @@ Do **not** call the MCP server any other way. Do **not** put tokens in commands,
 
 ## Tools list
 
-When the person asks to refresh XTAP tools, says they connected or disconnected an enterprise tool, or a tool call fails because the gateway does not know the tool:
+When the person asks to refresh LunarFence tools, says they connected or disconnected an enterprise tool, or a tool call fails because the gateway does not know the tool:
 
 1. `xtap tool sync`
 2. `xtap tool list`
@@ -35,15 +41,15 @@ Every failed command prints one JSON object on stdout with `ok: false`. Read `er
 - `sync_tools` — run `xtap tool sync`, then `xtap tool list`, then retry the call once with an exact listed tool name.
 - `new_task` — the task ended or does not belong to this caller: start a new task with the current prompt (`xtap task start`). Never reuse a task id across different person requests. `request_not_in_task` means the task was started before LunarFence request tools were supported; the new task supports them.
 - `tell_person` — tell the person what happened (use `error.message`) and stop. Do not retry and do not reword the prompt or arguments to get around a policy denial.
-- `connect_app` — tell the person to connect that app in XTAP Connected apps (the hint names the app), then stop. Do not retry until they say it is connected.
-- `reconnect_xtap` — tell the person to press Connect on the XTAP connector in Muse again, then stop. Run `xtap setup` again only after they confirm.
+- `connect_app` — the app isn't connected (the hint names it). Tell the person and offer to request the connection: if they agree, call `lunarfence_request_app_connection` through `xtap tool call` on the same task and give them the link (they can also connect it under Connectors in the LunarFence console). Then stop. Do not retry until they say it is connected; then run `xtap tool sync` and `xtap tool list` first.
+- `reconnect_xtap` — tell the person to press Connect on the LunarFence connector in Muse again, then stop. Run `xtap setup` again only after they confirm.
 - `ask_then_recover` — tell the person what happened and stop. Run `xtap recover` only if they agree, because recover disconnects the agent on the other device. On setup `key_retired` the same applies.
 - `run_doctor` — run `xtap doctor` and report its output. This is the only case in which to run doctor; use it only for `run_doctor`, never as a default.
 - `report` — give the person `error.message` and the correlation id (`error.correlation_id`, if present) and stop. Do not retry and do not run doctor.
 
 ## Consent and policy
 
-- **`consent_required`** (from task start): tell the person to approve the request in ACT (it shows `XTAP task` plus the first 8 chars of the task id), then **stop**. Do not retry or poll. Its `next_action` is `tell_person`.
+- **`consent_required`** (from task start): tell the person to approve the request in LunarFence (it shows `XTAP task` plus the first 8 chars of the task id), then **stop**. Do not retry or poll. Its `next_action` is `tell_person`.
 - **Policy denial** (`tell_person`, `reason` set): tell the person what was denied; do not retry with reworded prompts or arguments.
 - **Monthly tool-call limit** (`plan_limit_reached`, `tell_person`): the person's LunarFence account used this month's tool-call limit. Tell the person when calls work again: `error.limit_resets_at` (and the hint) give it in UTC, so convert it to the person's own time zone before telling them, then stop. Never retry. LunarFence's own tools (`explain_refusal`, `get_my_access`) still work.
 - **LunarFence requests**: a request tool (`lunarfence_request_app_connection`, `lunarfence_request_app_access`) refused with `requests_not_allowed`: tell the person to open this agent in the LunarFence console and turn on 'Allow this agent to ask you to connect apps or give it access', then stop.
