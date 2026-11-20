@@ -39,13 +39,14 @@ Every failed command prints one JSON object on stdout with `ok: false`. Read `er
 - `retry` — run the same command once more (wait `error.retry_after_seconds` first when it is present). Each retry of `xtap tool call` gets a new call token. If the same call fails again, treat it as `report`.
 - `fix_input` — correct the flag, file, or tool name the hint points at, then run the command again once. Use an exact name from `xtap tool list`; never guess.
 - `sync_tools` — run `xtap tool sync`, then `xtap tool list`, then retry the call once with an exact listed tool name.
-- `new_task` — the task ended or does not belong to this caller: start a new task with the current prompt (`xtap task start`). Never reuse a task id across different person requests. `request_not_in_task` means the task was started before LunarFence request tools were supported; the new task supports them.
+- `new_task` — the task ended or does not belong to this caller: start a new task with the current prompt (`xtap task start`). Never reuse a task id across different person requests. `request_not_in_task` means the task was started by an older xtap that declared actions; the new task declares none.
 - `tell_person` — tell the person what happened (use `error.message`) and stop. Do not retry and do not reword the prompt or arguments to get around a policy denial.
 - `connect_app` — the app isn't connected (the hint names it). Tell the person and offer to request the connection: if they agree, call `lunarfence_request_app_connection` through `xtap tool call` on the same task and give them the link (they can also connect it under Connectors in the LunarFence console). Then stop. Do not retry until they say it is connected; then run `xtap tool sync` and `xtap tool list` first.
 - `reconnect_xtap` — tell the person to press Connect on the LunarFence connector in Muse again, then stop. Run `xtap setup` again only after they confirm.
 - `ask_then_recover` — tell the person what happened and stop. Run `xtap recover` only if they agree, because recover disconnects the agent on the other device. On setup `key_retired` the same applies.
 - `run_doctor` — run `xtap doctor` and report its output. This is the only case in which to run doctor; use it only for `run_doctor`, never as a default.
 - `report` — give the person `error.message` and the correlation id (`error.correlation_id`, if present) and stop. Do not retry and do not run doctor.
+- `wait_for_approval` — LunarFence is holding this change until the person approves it. Show the person `error.message_for_person` (it has the approval link) in your own words, then run `error.resume_command` (`xtap approval wait <approval_id>`). Repeat that command while it answers `wait_for_approval`, until the call completes or is refused. Never call the tool again with other arguments while you wait.
 
 ## Consent and policy
 
@@ -55,6 +56,16 @@ Every failed command prints one JSON object on stdout with `ok: false`. Read `er
 - **LunarFence requests**: a request tool (`lunarfence_request_app_connection`, `lunarfence_request_app_access`) refused with `requests_not_allowed`: tell the person to open this agent in the LunarFence console and turn on 'Allow this agent to ask you to connect apps or give it access', then stop.
 - **After an xtap upgrade**, each live prompt gets one new task, so the person approves it once more.
 
+## Approvals
+
+LunarFence decides every tool call itself, from the person's rules. Reads run as before. A change (for example Calendar create, edit or delete event) may be allowed, blocked, or held for the person's approval; with no rules, any change can be held.
+
+- **A held change** answers `wait_for_approval`: show the person the link from `message_for_person`, wait, then continue or stop as they decide. `xtap approval wait <approval_id>` waits up to 50 seconds per run; run it again while it still answers `wait_for_approval`.
+- **After a decline, stop that action.** Tell the person it was not made.
+- **A blocked or declined change stays refused.** Never reword, split or switch tools to get around a refused change, and never make the same change another way.
+- **Lost the approval id?** Run `xtap approval list`; it shows each held call and its resume command. Making the same call again (same tool, same arguments, same task) also works: the same call again returns the same pending approval rather than a new one.
+- **`lunarfence_suggest_rule`**: suggest a rule only after the person has approved the same kind of change several times, and only about yourself (this agent). The person decides in the LunarFence console; never pressure them to accept. After `suggestion_dismissed`, `suggestions_pending_limit` or a "too many suggestions today" answer, don't suggest again.
+
 ## Setup, recover, and state
 
 - Do not run `xtap setup` or `xtap recover` unless the person asks, or `next_action` says to and the person agrees.
@@ -63,4 +74,4 @@ Every failed command prints one JSON object on stdout with `ok: false`. Read `er
 
 ## Offline commands
 
-`xtap version`, `xtap status`, `xtap task list`, `xtap tool list`, and `xtap skill show` make no network calls. Use them freely for inspection.
+`xtap version`, `xtap status`, `xtap task list`, `xtap tool list`, `xtap approval list`, and `xtap skill show` make no network calls. Use them freely for inspection.
